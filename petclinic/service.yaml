@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: petclinic-svc
+  annotations:
+    # AWS 로드밸런서에 구분용 Name 태그 추가
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "Name=kcu-petclinic-lb"
+spec:
+  selector:
+    app: petclinic
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer

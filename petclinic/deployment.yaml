@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: petclinic
+  template:
+    metadata:
+      labels:
+        app: petclinic
+    spec:
+      containers:
+        - name: petclinic
+          # 임시값. CI가 실행되면 실제 ECR 주소(Commit SHA 태그)로 자동 변경
+          image: petclinic:initial
+          ports:
+            - containerPort: 8080
+          # Pod가 트래픽을 받을 준비가 되었는지 확인 (Spring Boot Actuator)
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
