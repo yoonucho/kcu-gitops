@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: petclinic
+  namespace: argocd
+  # Application을 삭제하면 Argo CD가 만든 Deployment · Service(ELB)도 함께 삭제
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/yoonucho/kcu-gitops.git
+    targetRevision: HEAD
+    path: petclinic
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: petclinic
+  syncPolicy:
+    # Auto Sync, Prune, Self Heal 사용
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [CreateNamespace=true]
